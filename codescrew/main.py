@@ -52,7 +52,7 @@ def unscrew(a_file):
 
 def main():
     parser = argparse.ArgumentParser(description="Mess up (or fix) someone's code using lookalike unicode characters.")
-    parser.add_argument('-f', '--file', help="The target file(s)")
+    parser.add_argument("file", help="The target file(s)")
     parser.add_argument('-u', '--unscrew', action="store_true", help="Unscrews file(s) (default: screws file(s))")
 
     args = parser.parse_args()
