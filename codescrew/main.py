@@ -1,35 +1,54 @@
 #!/usr/bin/env python3
-import re
 import argparse
-from pprint import pprint as pp
+import fileinput
+import sys
+import logging
+from logging.config import dictConfig
 
-screw_db = [{'unscrew' : r';', 'screw' : '\u037e'},\
+screw_db = [{'unscrew' : ';', 'screw' : '\u037e'},\
     {'unscrew' : '!', 'screw' : 'ǃ'},\
     {'unscrew' : ',', 'screw' : '‚'},\
     {'unscrew' : '\'', 'screw' : 'ꞌ'},\
     {'unscrew' : ':', 'screw' : '∶'},\
     {'unscrew' : '*', 'screw' : '∗'}]
 
-def screw(a_file):
-    with 
-    with open(a_file, "r+") as screw_file:
-        screw_text = screw_file.read()
-        for screw_entry in screw_db:
-            screw_text = re.sub(screw_entry['unscrew'], screw_entry['screw'], screw_text)
+logging_config = dict(
+    version = 1,
+    formatters = {
+        'f': {'format':
+              '%(levelname)-4s %(message)s'}
+        },
+    handlers = {
+        'h': {'class': 'logging.StreamHandler',
+              'formatter': 'f',
+              'level': logging.DEBUG}
+        },
+    root = {
+        'handlers': ['h'],
+        'level': logging.DEBUG,
+        },
+)
 
-        screw_file.seek(0)
-        screw_file.write(screw_text)
-        screw_file.truncate()
+dictConfig(logging_config)
+logger = logging.getLogger()
+logger.setLevel(logging.DEBUG)
+
+def unicode_codepoint(string):
+    return "".join([r"\u{0:X}".format(ord(s)) for s in string])
+
+def screw(a_file):
+    for line in fileinput.input(a_file, inplace=True):
+        for screw_entry in screw_db:
+            line = line.replace(screw_entry['unscrew'], screw_entry['screw'])
+
+        sys.stdout.write(line)
 
 def unscrew(a_file):
-    with open(a_file, "r+") as unscrew_file:
-        unscrew_text = unscrew_file.read()
+    for line in fileinput.input(a_file, inplace=True):
         for screw_entry in screw_db:
-            unscrew_text = re.sub(screw_entry['screw'], screw_entry['unscrew'], unscrew_text)
+            line = line.replace(screw_entry['screw'], screw_entry['unscrew'])
 
-        unscrew_file.seek(0)
-        unscrew_file.write(unscrew_text)
-        unscrew_file.truncate()
+        sys.stdout.write(line)
 
 def main():
     parser = argparse.ArgumentParser(description="Mess up (or fix) someone's code using lookalike unicode characters.")
@@ -40,7 +59,8 @@ def main():
     if args.unscrew:
       unscrew(args.file)
 
-    screw(args.file)
+    else:
+        screw(args.file)
 
 if __name__ == "__main__":
     main()
