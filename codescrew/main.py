@@ -3,6 +3,7 @@ import argparse
 import fileinput
 import sys
 import logging
+import glob
 from logging.config import dictConfig
 
 screw_db = [{'unscrew' : ';', 'screw' : '\u037e'},\
@@ -52,15 +53,19 @@ def unscrew(a_file):
 
 def main():
     parser = argparse.ArgumentParser(description="Mess up (or fix) someone's code using lookalike unicode characters.")
-    parser.add_argument("file", help="The target file(s)")
+    parser.add_argument("files", nargs="+", help="The target file(s)")
     parser.add_argument('-u', '--unscrew', action="store_true", help="Unscrews file(s) (default: screws file(s))")
 
     args = parser.parse_args()
     if args.unscrew:
-      unscrew(args.file)
+        for file_group in args.files:
+            for f in glob.glob(file_group):
+              unscrew(f)
 
     else:
-        screw(args.file)
+        for file_group in args.files:
+                for f in glob.glob(file_group):
+                    screw(f)
 
 if __name__ == "__main__":
     main()

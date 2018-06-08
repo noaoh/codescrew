@@ -2,7 +2,7 @@
 from setuptools import setup 
 setup(
         name="codescrew",
-        version="0.1.0",
+        version="1.0.0",
         description="A simple utility for pulling pranks on your friend's
         code (and to undo it)",
         url="https://github.com/noaoh/codescrew",
